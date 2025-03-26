@@ -11,8 +11,45 @@ git clone https://github.com/julianReyes-dev/traefik-taller-marzo-25.git
 ```bash
 cd traefik-taller-marzo-25
 ```
+## 2. Configurar el archivo Hosts
 
-## 2. Levantar los Servicios
+Antes de ejecutar `docker-compose up`, es necesario agregar las siguientes configuraciones en el archivo `/etc/hosts`.
+
+### Método 1: Usando terminal con nano
+
+1. Abre una terminal y ejecuta:
+   ```bash
+   sudo nano /etc/hosts
+   ```
+2. Agrega estas líneas al final del archivo:
+   ```bash
+   127.0.0.1 traefik.localhost
+   127.0.0.1 nginx.localhost
+   127.0.0.1 api.localhost
+   ```
+3. Guarda los cambios:
+   - Presiona `Ctrl+O` para guardar
+   - Presiona `Enter` para confirmar
+   - Presiona `Ctrl+X` para salir
+
+### Método 2: Usando terminal con Vim
+
+1. Abre una terminal y ejecuta:
+   ```bash
+   sudo vim /etc/hosts
+   ```
+2. Presiona `i` para entrar en modo edición.
+3. Agrega estas líneas al final del archivo:
+   ```bash
+   127.0.0.1 traefik.localhost
+   127.0.0.1 nginx.localhost
+   127.0.0.1 api.localhost
+   ```
+4. Guarda los cambios y sal de Vim:
+   - Presiona `Esc`
+   - Escribe `:wq` y presiona `Enter`
+
+## 3. Levantar los Servicios
 
 Ejecutar los siguientes comandos para levantar los servicios en segundo plano:
 
@@ -20,7 +57,7 @@ Ejecutar los siguientes comandos para levantar los servicios en segundo plano:
 docker-compose up -d
 ```
 
-## 3. Generar Tráfico
+## 4. Generar Tráfico
 
 ```bash
 # Acceder a Nginx (público)
