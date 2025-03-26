@@ -22,18 +22,14 @@ docker-compose up -d
 
 ## 3. Generar Tráfico
 
-### Acceder a Nginx (público)
 ```bash
+# Acceder a Nginx (público)
 curl http://nginx.localhost
-```
 
-### Acceder a la API (con autenticación)
-```bash
+# Acceder a la API (con autenticación)
 curl http://api.localhost/api -u test:test
-```
 
-### Acceder al dashboard de Traefik
-```bash
+# Acceder al dashboard de Traefik
 curl http://traefik.localhost:8080
 ```
 
