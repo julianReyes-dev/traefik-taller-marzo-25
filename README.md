@@ -1,6 +1,6 @@
 # Manual de Uso
 
-Este documento describe los pasos para clonar el repositorio, configurar el entorno y probar las funcionalidades del sistema utilizando Docker y Traefik.
+Este documento describe los pasos para clonar el repositorio, configurar el entorno y probar las funcionalidades del sistema utilizando Docker y Traefik además de demostrar su funcionalidad.
 
 ## 1. Clonar el Repositorio
 
@@ -68,28 +68,28 @@ docker-compose up -d
 ```
 
 Este comando inicia los contenedores en segundo plano (`-d` significa "detached"), permitiendo que el sistema funcione sin bloquear la terminal.
+![imagen](https://github.com/user-attachments/assets/7d6b5711-b0ca-45fb-a217-5ddc13ea71d6)
+
 
 ## 4. Generar Tráfico
 
 Para verificar que los servicios están funcionando correctamente, realice las siguientes pruebas:
 
-### Acceder a Nginx (público)
 ```bash
+# Acceder a Nginx (público)
 curl http://nginx.localhost
-```
-Este comando verifica que el servidor web Nginx esté activo y accesible.
 
-### Acceder a la API (con autenticación)
-```bash
+# Acceder a la API (con autenticación)
 curl http://api.localhost/api -u test:test
-```
-Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.
 
-### Acceder al dashboard de Traefik
-```bash
+# Acceder al dashboard de Traefik
 curl http://traefik.localhost:8080
 ```
-Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.
+Este comando verifica que el servidor web Nginx esté activo y accesible.  
+Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.  
+Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.  
+![imagen](https://github.com/user-attachments/assets/b71fc92a-e5eb-4ef6-adb8-160d43a0a5c6)
+
 
 ## 5. Ver Logs
 
@@ -99,20 +99,29 @@ Para diagnosticar problemas o analizar el tráfico de los servicios, se pueden c
 ```bash
 docker logs traefik | grep -E '^{'
 ```
+![imagen](https://github.com/user-attachments/assets/8d9718aa-5bab-4930-9a3f-de8a1ceca18b)
+
 Esto muestra los registros generados por Traefik en formato JSON.
 
 ### Filtrar logs por servicio
 ```bash
-docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "nginx.localhost")'
-docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "api.localhost")'
+docker logs traefik | grep -E '^{"' | jq 'select(.RequestHost == "nginx.localhost")'
+docker logs traefik | grep -E '^{"' | jq 'select(.RequestHost == "api.localhost")'
 ```
+![imagen](https://github.com/user-attachments/assets/75ef134e-d87b-4f36-8163-84f26e91ba07)
+
 Estos comandos filtran los registros por servicio, permitiendo analizar el tráfico de `nginx.localhost` o `api.localhost`.
 
 ### Formato resumido
 ```bash
 docker logs traefik | grep -E '^{"' | jq -c '[.time, .RequestHost, .RequestMethod, .RequestPath, .DownstreamStatus, .ClientUsername]'
 ```
-Este comando muestra una versión simplificada de los logs, resaltando la información más relevante.
+![imagen](https://github.com/user-attachments/assets/9c206c09-743a-466d-b460-1af0e4536dd9)
+
+Este comando muestra una versión simplificada de los logs, resaltando la información más relevante y comprobando que la conexión es satisfactoria.  
+
+>Los logs se generan gracias a --accesslog=true y --accesslog.format=json  
+>Se almacenan en el contenedor Traefik y se acceden con docker logs
 
 ## 6. Probar la Autenticación
 
