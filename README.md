@@ -1,19 +1,21 @@
 # Manual de Uso
 
-Este documento describe los pasos para clonar el repositorio, levantar los servicios con Docker y probar sus funcionalidades.
+Este documento describe los pasos para clonar el repositorio, configurar el entorno y probar las funcionalidades del sistema utilizando Docker y Traefik.
 
 ## 1. Clonar el Repositorio
 
+Para obtener el código fuente del proyecto, ejecute los siguientes comandos en la terminal:
+
 ```bash
-# Clonar el repositorio
 git clone https://github.com/julianReyes-dev/traefik-taller-marzo-25.git
 ```
 ```bash
 cd traefik-taller-marzo-25
 ```
+
 ## 2. Configurar el archivo Hosts
 
-Antes de ejecutar `docker-compose up`, es necesario agregar las siguientes configuraciones en el archivo `/etc/hosts`.
+Para que los nombres de dominio locales (como `nginx.localhost` y `api.localhost`) funcionen correctamente, es necesario agregarlos al archivo `/etc/hosts`. Esto permite que las solicitudes dirigidas a estos dominios sean resueltas correctamente en el entorno local.
 
 ### Método 1: Usando terminal con nano
 
@@ -49,76 +51,106 @@ Antes de ejecutar `docker-compose up`, es necesario agregar las siguientes confi
    - Presiona `Esc`
    - Escribe `:wq` y presiona `Enter`
 
+Verifica que los cambios se aplicaron correctamente con:
+
+```bash
+cat /etc/hosts | grep localhost
+```
+
+Este paso es fundamental para que los contenedores de Docker puedan ser accedidos mediante nombres de dominio en lugar de direcciones IP.
+
 ## 3. Levantar los Servicios
 
-Ejecutar los siguientes comandos para levantar los servicios en segundo plano:
+Ahora, inicie los servicios utilizando `docker-compose`:
 
 ```bash
 docker-compose up -d
 ```
 
+Este comando inicia los contenedores en segundo plano (`-d` significa "detached"), permitiendo que el sistema funcione sin bloquear la terminal.
+
 ## 4. Generar Tráfico
 
+Para verificar que los servicios están funcionando correctamente, realice las siguientes pruebas:
+
+### Acceder a Nginx (público)
 ```bash
-# Acceder a Nginx (público)
 curl http://nginx.localhost
+```
+Este comando verifica que el servidor web Nginx esté activo y accesible.
 
-# Acceder a la API (con autenticación)
+### Acceder a la API (con autenticación)
+```bash
 curl http://api.localhost/api -u test:test
+```
+Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.
 
-# Acceder al dashboard de Traefik
+### Acceder al dashboard de Traefik
+```bash
 curl http://traefik.localhost:8080
 ```
+Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.
 
-## 4. Ver Logs
+## 5. Ver Logs
+
+Para diagnosticar problemas o analizar el tráfico de los servicios, se pueden consultar los logs de Traefik.
 
 ### Ver todos los logs en formato JSON
 ```bash
 docker logs traefik | grep -E '^{'
 ```
+Esto muestra los registros generados por Traefik en formato JSON.
 
 ### Filtrar logs por servicio
 ```bash
-docker logs traefik | grep -E '^{" | jq -c 'select(.RequestHost == "nginx.localhost")'
-docker logs traefik | grep -E '^{" | jq -c 'select(.RequestHost == "api.localhost")'
+docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "nginx.localhost")'
+docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "api.localhost")'
 ```
+Estos comandos filtran los registros por servicio, permitiendo analizar el tráfico de `nginx.localhost` o `api.localhost`.
 
 ### Formato resumido
 ```bash
-docker logs traefik | grep -E '^{" | jq -c '[.time, .RequestHost, .RequestMethod, .RequestPath, .DownstreamStatus, .ClientUsername]'
+docker logs traefik | grep -E '^{"' | jq -c '[.time, .RequestHost, .RequestMethod, .RequestPath, .DownstreamStatus, .ClientUsername]'
 ```
+Este comando muestra una versión simplificada de los logs, resaltando la información más relevante.
 
-## 5. Probar la Autenticación
+## 6. Probar la Autenticación
+
+El sistema utiliza autenticación HTTP básica para proteger el acceso a la API.
 
 ### Prueba exitosa (usuario: test, contraseña: test)
 ```bash
 curl -v http://api.localhost/api -u test:test
 ```
-**Debe devolver:** `200 OK`
+**Debe devolver:** `200 OK`, lo que indica un acceso exitoso.
 
 ### Prueba fallida (credenciales incorrectas)
 ```bash
 curl -v http://api.localhost/api -u test:wrongpassword
 ```
-**Debe devolver:** `401 Unauthorized`
+**Debe devolver:** `401 Unauthorized`, lo que significa que las credenciales son incorrectas.
 
 ### Sin credenciales
 ```bash
 curl -v http://api.localhost/api
 ```
-**Debe devolver:** `401 Unauthorized`
+**Debe devolver:** `401 Unauthorized`, ya que la API requiere autenticación.
 
 ### Ver los logs de autenticación
 ```bash
-docker logs traefik | grep -E '^{" | jq -c 'select(.RequestHost == "api.localhost") | [.DownstreamStatus, .ClientUsername]'
+docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "api.localhost") | [.DownstreamStatus, .ClientUsername]'
 ```
+Este comando permite verificar los intentos de autenticación en los registros.
 
-**Método de autenticación:** HTTP estándar
-- Las credenciales se envían en el header `Authorization: Basic <base64>`
-- Traefik verifica contra la lista de usuarios configurada
-- Las contraseñas se almacenan con hash (`APR1`, variante de MD5)
+**Explicación de la autenticación:**
+- Se utiliza autenticación HTTP estándar.
+- Las credenciales se envían en el header `Authorization: Basic <base64>`.
+- Traefik compara los datos con la lista de usuarios configurados.
+- Las contraseñas se almacenan con un hash seguro (`APR1`, variante de MD5).
 
-## 6. Comprobar la Limitación de Velocidad
+## 7. Comprobar la Limitación de Velocidad
+
+El sistema implementa restricciones para evitar el abuso de solicitudes excesivas.
 
 ### Ejecutar múltiples solicitudes rápidamente
 ```bash
@@ -127,17 +159,21 @@ for i in {1..15}; do
   sleep 0.1
 done
 ```
+Este comando realiza 15 solicitudes en rápida sucesión para verificar la limitación de velocidad.
 
 ### Buscar respuestas `429 (Too Many Requests)`
 ```bash
-docker logs traefik | grep -E '^{" | jq -c 'select(.DownstreamStatus == 429)'
+docker logs traefik | grep -E '^{"' | jq -c 'select(.DownstreamStatus == 429)'
 ```
+Esto permite detectar si el sistema ha bloqueado solicitudes por exceder el límite permitido.
 
 ### Estadísticas de Rate Limiting
 ```bash
-docker logs traefik | grep -E '^{" | jq -c 'select(.RequestHost == "nginx.localhost") | [.time, .DownstreamStatus]'
+docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "nginx.localhost") | [.time, .DownstreamStatus]'
 ```
 
 **Interpretación de resultados:**
-- **Si no hay salida:** No se ha excedido el límite de velocidad
-- **Si hay resultados:** Cada línea mostrará un JSON con detalles de una solicitud rechazada por `rate limiting`
+- **Si no hay salida:** No se ha excedido el límite de velocidad.
+- **Si hay resultados:** Cada línea mostrará un JSON con detalles de una solicitud rechazada por `rate limiting`.
+
+Este mecanismo protege el sistema contra posibles ataques o uso excesivo de recursos.
