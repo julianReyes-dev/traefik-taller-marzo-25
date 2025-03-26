@@ -6,8 +6,10 @@ Este documento describe los pasos para clonar el repositorio, levantar los servi
 
 ```bash
 # Clonar el repositorio
-git clone <URL_DEL_REPO>
-cd <NOMBRE_DEL_REPOSITORIO>
+git clone https://github.com/julianReyes-dev/traefik-taller-marzo-25.git
+```
+```bash
+cd traefik-taller-marzo-25
 ```
 
 ## 2. Levantar los Servicios
