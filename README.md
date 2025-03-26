@@ -85,9 +85,10 @@ curl http://api.localhost/api -u test:test
 # Acceder al dashboard de Traefik
 curl http://traefik.localhost:8080
 ```
-Este comando verifica que el servidor web Nginx esté activo y accesible.  
-Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.  
-Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.  
+- Este comando verifica que el servidor web Nginx esté activo y accesible.  
+- Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.  
+- Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.  
+
 ![imagen](https://github.com/user-attachments/assets/b71fc92a-e5eb-4ef6-adb8-160d43a0a5c6)
 
 
@@ -132,24 +133,32 @@ El sistema utiliza autenticación HTTP básica para proteger el acceso a la API.
 curl -v http://api.localhost/api -u test:test
 ```
 **Debe devolver:** `200 OK`, lo que indica un acceso exitoso.
+![imagen](https://github.com/user-attachments/assets/a1e737de-773d-41b0-acfb-29d509d93699)
+
 
 ### Prueba fallida (credenciales incorrectas)
 ```bash
 curl -v http://api.localhost/api -u test:wrongpassword
 ```
 **Debe devolver:** `401 Unauthorized`, lo que significa que las credenciales son incorrectas.
+![imagen](https://github.com/user-attachments/assets/acd7d905-10f5-403b-963d-48ae0518f057)
+
 
 ### Sin credenciales
 ```bash
 curl -v http://api.localhost/api
 ```
 **Debe devolver:** `401 Unauthorized`, ya que la API requiere autenticación.
+![imagen](https://github.com/user-attachments/assets/5b15d9d4-5b1a-4675-8a46-89861bf3cc98)
+
 
 ### Ver los logs de autenticación
 ```bash
 docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "api.localhost") | [.DownstreamStatus, .ClientUsername]'
 ```
 Este comando permite verificar los intentos de autenticación en los registros.
+![imagen](https://github.com/user-attachments/assets/9c7c8a28-fd1d-4125-8e60-2b63c8d189e7)
+
 
 **Explicación de la autenticación:**
 - Se utiliza autenticación HTTP estándar.
@@ -174,12 +183,16 @@ Este comando realiza 15 solicitudes en rápida sucesión para verificar la limit
 ```bash
 docker logs traefik | grep -E '^{"' | jq -c 'select(.DownstreamStatus == 429)'
 ```
+![imagen](https://github.com/user-attachments/assets/267c204d-d430-4771-b3c3-1ec24446cb95)
+
 Esto permite detectar si el sistema ha bloqueado solicitudes por exceder el límite permitido.
 
 ### Estadísticas de Rate Limiting
 ```bash
 docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "nginx.localhost") | [.time, .DownstreamStatus]'
 ```
+![imagen](https://github.com/user-attachments/assets/1f7e45cc-4807-4b92-bfe4-fa8849f039f2)
+- Las respuestas 429 son "Too Many Requests" y se dan cuando se excede el límite del rate limiting
 
 **Interpretación de resultados:**
 - **Si no hay salida:** No se ha excedido el límite de velocidad.
