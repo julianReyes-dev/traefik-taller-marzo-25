@@ -198,6 +198,8 @@ Este comando permite verificar los intentos de autenticación en los registros.
 
 ### Desde navegador
 Al acceder a ```http://api.localhost/api``` se mostrará un diálogo de autenticación:
+![image](https://github.com/user-attachments/assets/23d4c2bd-8394-437c-ba14-eb5eb41c3683)
+
 
 
 **Explicación de la autenticación:**
