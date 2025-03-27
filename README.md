@@ -162,7 +162,9 @@ Este comando muestra una versión simplificada de los logs, resaltando la inform
 
 El sistema utiliza autenticación HTTP básica para proteger el acceso a la API.
 
-### Prueba exitosa (usuario: test, contraseña: test)
+### Desde terminal
+
+#### Prueba exitosa (usuario: test, contraseña: test)
 ```bash
 curl -v http://api.localhost/api -u test:test
 ```
@@ -170,7 +172,7 @@ curl -v http://api.localhost/api -u test:test
 ![imagen](https://github.com/user-attachments/assets/a1e737de-773d-41b0-acfb-29d509d93699)
 
 
-### Prueba fallida (credenciales incorrectas)
+#### Prueba fallida (credenciales incorrectas)
 ```bash
 curl -v http://api.localhost/api -u test:wrongpassword
 ```
@@ -178,7 +180,7 @@ curl -v http://api.localhost/api -u test:wrongpassword
 ![imagen](https://github.com/user-attachments/assets/acd7d905-10f5-403b-963d-48ae0518f057)
 
 
-### Sin credenciales
+#### Sin credenciales
 ```bash
 curl -v http://api.localhost/api
 ```
@@ -186,12 +188,16 @@ curl -v http://api.localhost/api
 ![imagen](https://github.com/user-attachments/assets/5b15d9d4-5b1a-4675-8a46-89861bf3cc98)
 
 
-### Ver los logs de autenticación
+#### Ver los logs de autenticación
 ```bash
 docker logs traefik | grep -E '^{"' | jq -c 'select(.RequestHost == "api.localhost") | [.DownstreamStatus, .ClientUsername]'
 ```
 Este comando permite verificar los intentos de autenticación en los registros.
 ![imagen](https://github.com/user-attachments/assets/9c7c8a28-fd1d-4125-8e60-2b63c8d189e7)
+
+
+### Desde navegador
+Al acceder a ```http://api.localhost/api``` se mostrará un diálogo de autenticación:
 
 
 **Explicación de la autenticación:**
