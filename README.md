@@ -3,16 +3,12 @@
 Este documento describe los pasos para clonar el repositorio, configurar el entorno y probar las funcionalidades del sistema utilizando Docker y Traefik además de demostrar su funcionalidad.
 
 ## Compatibilidad con navegadores  
-Este sistema ha sido probado en los navegadores Brave y Opera, donde funciona correctamente. Sin embargo, en Firefox pueden presentarse problemas con la resolución de nombres de dominio locales.
+Este sistema ha sido probado en los navegadores Brave y Opera, donde funciona correctamente. Sin embargo, en Firefox pueden presentarse problemas con la resolución de nombres de dominio locales.  
 ✅ Funciona correctamente en:
-
-    Brave
-
-    Opera
-
+- Brave
+- Opera
 ⚠️ Problemas conocidos en:
-
-    Firefox (puede requerir configuración adicional)  
+- Firefox (puede requerir configuración adicional)  
     
 
 ## 1. Clonar el Repositorio
