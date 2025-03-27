@@ -4,9 +4,11 @@ Este documento describe los pasos para clonar el repositorio, configurar el ento
 
 ## Compatibilidad con navegadores  
 Este sistema ha sido probado en los navegadores Brave y Opera, donde funciona correctamente. Sin embargo, en Firefox pueden presentarse problemas con la resolución de nombres de dominio locales.  
+
 ✅ Funciona correctamente en:
 - Brave
 - Opera
+
 ⚠️ Problemas conocidos en:
 - Firefox (puede requerir configuración adicional)  
     
