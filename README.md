@@ -2,6 +2,19 @@
 
 Este documento describe los pasos para clonar el repositorio, configurar el entorno y probar las funcionalidades del sistema utilizando Docker y Traefik además de demostrar su funcionalidad.
 
+## Compatibilidad con navegadores  
+Este sistema ha sido probado en los navegadores Brave y Opera, donde funciona correctamente. Sin embargo, en Firefox pueden presentarse problemas con la resolución de nombres de dominio locales.
+✅ Funciona correctamente en:
+
+    Brave
+
+    Opera
+
+⚠️ Problemas conocidos en:
+
+    Firefox (puede requerir configuración adicional)  
+    
+
 ## 1. Clonar el Repositorio
 
 Para obtener el código fuente del proyecto, ejecute los siguientes comandos en la terminal:
@@ -71,10 +84,11 @@ Este comando inicia los contenedores en segundo plano (`-d` significa "detached"
 ![imagen](https://github.com/user-attachments/assets/7d6b5711-b0ca-45fb-a217-5ddc13ea71d6)
 
 
-## 4. Generar Tráfico
+## 4. Probar los servicios
 
 Para verificar que los servicios están funcionando correctamente, realice las siguientes pruebas:
 
+### Desde terminal
 ```bash
 # Acceder a Nginx (público)
 curl http://nginx.localhost
@@ -87,9 +101,31 @@ curl http://traefik.localhost:8080
 ```
 - Este comando verifica que el servidor web Nginx esté activo y accesible.  
 - Aquí se está accediendo a la API, que requiere autenticación básica con usuario `test` y contraseña `test`.  
-- Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.  
+- Traefik proporciona un panel de administración que permite visualizar el estado de las conexiones y las reglas de enrutamiento.
 
 ![imagen](https://github.com/user-attachments/assets/b71fc92a-e5eb-4ef6-adb8-160d43a0a5c6)
+
+### Desde navegador
+Nginx
+```bash
+http://nginx.localhost
+```
+![imagen](https://github.com/user-attachments/assets/fe7d18fd-6b31-47c9-ad14-de5a13ddc6be)
+
+
+API (whoami) con credenciales test/test
+```bash
+http://api.localhost/api
+```
+![imagen](https://github.com/user-attachments/assets/8000a032-b133-4210-ba39-93c943b3d1d6)
+
+
+Traefik
+```bash
+http://traefik.localhost:8080
+```
+![imagen](https://github.com/user-attachments/assets/d0a1a5e5-baed-4c4a-a8a4-0cb01cb5dc73)
+
 
 
 ## 5. Ver Logs
